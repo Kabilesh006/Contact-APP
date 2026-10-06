@@ -1,0 +1,287 @@
+{
+  "info": {
+    "name": "AddressBook verification",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/contacts",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Sara Ali\",\"phone\":\"0123456789\",\"email\":\"{{email}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.collectionVariables.set('email', pm.variables.replaceIn('{{$guid}}') + '@example.com');"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 201', () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set('contactId', pm.response.json().contact.contactId);",
+              "pm.test('Successful creation', () => pm.expect(pm.response.json().success).to.be.true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/contacts",
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('List includes created contact', () => pm.expect(pm.response.json().contacts.some(c => c.contactId === pm.collectionVariables.get('contactId'))).to.be.true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Retrieve",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/contacts/{{contactId}}",
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Duplicate email",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/contacts",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Copy\",\"phone\":\"1234567890\",\"email\":\"{{email}}\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 409', () => pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid phone",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/contacts",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Invalid\",\"phone\":\"123\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid email",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/contacts",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Invalid\",\"phone\":\"1234567890\",\"email\":\"bad\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Missing name",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/contacts",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"phone\":\"1234567890\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/contacts/{{contactId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Sara Updated\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('New name', () => pm.expect(pm.response.json().contact.name).to.equal('Sara Updated'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject invalid update",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/contacts/{{contactId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"phone\":\"bad\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/contacts/{{contactId}}",
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Confirm deletion",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/contacts/{{contactId}}",
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 404', () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
