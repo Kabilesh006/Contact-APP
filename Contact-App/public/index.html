@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Management System</title>
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #06b6d4;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      color: var(--text-main);
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 950px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      padding: 35px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header {
+      margin-bottom: 25px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #4f46e5, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #059669;
+      background: #ecfdf5;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    .form-container {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 25px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .form-group input {
+      padding: 10px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+      background: #fff;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-clear {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .btn-clear:hover {
+      background: #cbd5e1;
+    }
+
+    .table-section h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 8px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    thead th {
+      background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+      color: #ffffff;
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    tbody td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13.5px;
+      color: #334155;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    .badge-id {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: monospace;
+    }
+
+    .badge-error {
+      color: #dc2626;
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .empty-row {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 30px !important;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div class="header">
+      <div>
+        <h1>Contact Management System</h1>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 3px;">Full Stack Express & MongoDB AddressBook</p>
+      </div>
+      <div class="status-badge">
+        <span class="dot"></span>
+        API Online
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="form-container">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input type="text" id="name" placeholder="Enter name" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone (10 digits) *</label>
+          <input type="tel" id="phone" placeholder="Enter 10-digit phone" maxlength="10" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email (Optional)</label>
+          <input type="email" id="email" placeholder="Enter email">
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="addContact()">+ Add Contact</button>
+        <button class="btn btn-clear" onclick="clearForm()">Clear</button>
+      </div>
+      <div id="errorMsg" class="badge-error"></div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-section">
+      <h2>All Contacts</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 18%;">ID</th>
+            <th style="width: 32%;">Name</th>
+            <th style="width: 25%;">Phone</th>
+            <th style="width: 25%;">Email</th>
+          </tr>
+        </thead>
+        <tbody id="contactsTableBody">
+          <tr><td colspan="4" class="empty-row">Loading contacts...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const API = '/contacts';
+
+    async function fetchContacts() {
+      try {
+        const res = await fetch(API);
+        const data = await res.json();
+        const tbody = document.getElementById('contactsTableBody');
+        
+        if (!data.contacts || data.contacts.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-row">No contacts saved yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.contacts.map((c, i) => {
+          const displayId = c.contactId || ('C' + String(i + 1).padStart(3, '0'));
+          return `
+            <tr>
+              <td><span class="badge-id">${escape(displayId)}</span></td>
+              <td><b>${escape(c.name)}</b></td>
+              <td>${escape(c.phone)}</td>
+              <td>${escape(c.email || '-')}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        document.getElementById('contactsTableBody').innerHTML = '<tr><td colspan="4" class="empty-row">Failed to load contacts.</td></tr>';
+      }
+    }
+
+    async function addContact() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const errorDiv = document.getElementById('errorMsg');
+
+      errorDiv.style.display = 'none';
+
+      if (!name) {
+        showError('Please enter a name.');
+        return;
+      }
+      if (!phone || !/^[0-9]{10}$/.test(phone)) {
+        showError('Phone number must be exactly 10 digits.');
+        return;
+      }
+
+      const body = { name, phone };
+      if (email) body.email = email;
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          const reason = data.issues ? data.issues.map(i => i.reason).join(', ') : data.message;
+          showError(reason || 'Failed to add contact');
+          return;
+        }
+
+        clearForm();
+        fetchContacts();
+      } catch (err) {
+        showError('Network error while saving contact.');
+      }
+    }
+
+    function showError(msg) {
+      const errorDiv = document.getElementById('errorMsg');
+      errorDiv.textContent = msg;
+      errorDiv.style.display = 'block';
+    }
+
+    function clearForm() {
+      document.getElementById('name').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function escape(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    fetchContacts();
+  </script>
+</body>
+</html>
