@@ -1,4 +1,4 @@
-# AddressBook API
+# Contact App
 
 A Node.js contact management assignment using Express, MongoDB and Mongoose. This implementation uses native JavaScript ES modules, separate request handlers and validation middleware, and a JSON API intended for Postman or Thunder Client.
 
